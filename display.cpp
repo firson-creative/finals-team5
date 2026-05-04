@@ -89,6 +89,8 @@ void tampilkanMenuRiwayat() {
     tampilkanHeader("RIWAYAT TRANSAKSI");
     cout << "  1.  Tampilkan Seluruh Riwayat\n";
     cout << "  2.  Cari Transaksi by Nama Obat\n"; //(Linear Search)
+    cout << "  3.  Lihat Total Transaksi\n";
+    cout << "  4.  Hapus Semua Riwayat\n";
     cout << "  0.  Kembali\n";
     cout << "\n";
     tampilkanSeparator();
