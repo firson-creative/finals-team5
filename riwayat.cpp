@@ -14,9 +14,9 @@ static void cetakHeader() {
 
 Riwayat::Riwayat() : head(nullptr), total(0) {}
 Riwayat::~Riwayat() {
-    Node* current = head;
+    Node *current = head;
     while (current != nullptr) {
-        Node* berikutnya = current->next;
+        Node *berikutnya = current->next;
         delete current;
         current = berikutnya;
     }
@@ -24,9 +24,8 @@ Riwayat::~Riwayat() {
     total = 0;
 }
 
-void Riwayat::tambah(string namaObat, string jenis, int jumlah,
-                     string tanggal, string keterangan) {
-    Node* nodeBaru = new Node(namaObat, jenis, jumlah, tanggal, keterangan);
+void Riwayat::tambah(string namaObat, string jenis, int jumlah, string tanggal, string keterangan) {
+    Node *nodeBaru = new Node(namaObat, jenis, jumlah, tanggal, keterangan);
     nodeBaru->next = head;
     head = nodeBaru;
     total++;
@@ -44,8 +43,8 @@ void Riwayat::tampilkan() const {
     cout << "  | No  | Nama Obat          | Jenis   | Jumlah  | Tanggal      | Keterangan      |\n";
     cout << "  +-----+--------------------+---------+---------+--------------+-----------------+\n";
     
-    Node* current = head;
-    int   nomor   = 1;
+    Node *current = head;
+    int nomor   = 1;
 
     while (current != nullptr) {
         cout << "  | "
@@ -70,7 +69,7 @@ void Riwayat::tampilkan() const {
     cout << "  Total Transaksi : " << total << " data\n\n";
 }
 
-bool Riwayat::cari(const string& namaObat) const {
+bool Riwayat::cari(const string &namaObat) const {
     if (head == nullptr) {
         cout << "\n  [!] Riwayat kosong. [!]\n";
         return false;
@@ -118,9 +117,9 @@ bool Riwayat::cari(const string& namaObat) const {
 }
 
 void Riwayat::hapusSemua() {
-    Node* current = head;
+    Node *current = head;
     while (current != nullptr) {
-        Node* berikutnya = current->next;
+        Node *berikutnya = current->next;
         delete current;
         current = berikutnya;
     }

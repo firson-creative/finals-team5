@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <ctime>
 #include "display.h"
 #include "obat.h"      
 #include "antrian.h"   
@@ -7,6 +8,14 @@
 #include "sortir.h"    
 #include "graph.h"
 using namespace std;
+
+static string tanggalSaatIni() {
+    time_t t = time(nullptr);
+    tm* sekarang = localtime(&t);
+    char buffer[11];
+    strftime(buffer, sizeof(buffer), "%Y-%m-%d", sekarang);
+    return string(buffer);
+}
 
 void menuObat(BSTObat &bst, Riwayat &riwayat) {
     int pilihan;
@@ -29,7 +38,7 @@ void menuObat(BSTObat &bst, Riwayat &riwayat) {
                 cout << "  Tgl. Kadaluarsa : "; getline(cin, exp);
 
                 bst.insert(kode, nama, jumlah, exp);
-                riwayat.tambah(kode, nama, jumlah, "MASUK");
+                riwayat.tambah(nama, "MASUK", jumlah, tanggalSaatIni(), "Tambah obat baru");
                 tampilkanSuccess("Obat berhasil ditambahkan ke sistem.");
                 pauseScreen();
                 break;
@@ -40,7 +49,7 @@ void menuObat(BSTObat &bst, Riwayat &riwayat) {
                 cout << "  Jumlah      : "; cin >> jumlah; cin.ignore();
 
                 if (bst.tambahStok(kode, jumlah)) {
-                    riwayat.tambah(kode, bst.getNama(kode), jumlah, "MASUK");
+                    riwayat.tambah(bst.getNama(kode), "MASUK", jumlah, tanggalSaatIni(), "Tambah stok");
                     tampilkanSuccess("Stok berhasil ditambah.");
                 } else {
                     tampilkanError("Kode obat tidak ditemukan.");
@@ -54,7 +63,7 @@ void menuObat(BSTObat &bst, Riwayat &riwayat) {
                 cout << "  Jumlah      : "; cin >> jumlah; cin.ignore();
 
                 if (bst.kurangiStok(kode, jumlah)) {
-                    riwayat.tambah(kode, bst.getNama(kode), jumlah, "KELUAR");
+                    riwayat.tambah(bst.getNama(kode), "KELUAR", jumlah, tanggalSaatIni(), "Kurangi stok");
                     tampilkanSuccess("Stok berhasil dikurangi.");
                 } else {
                     tampilkanError("Kode obat tidak ditemukan / stok tidak cukup.");
@@ -65,8 +74,10 @@ void menuObat(BSTObat &bst, Riwayat &riwayat) {
             case 4: 
                 tampilkanHeader("HAPUS OBAT");
                 cout << "  Kode Obat : "; getline(cin, kode);
+                nama = bst.getNama(kode);
 
                 if (bst.hapus(kode)) {
+                    riwayat.tambah(nama.empty() ? kode : nama, "HAPUS", 0, tanggalSaatIni(), "Hapus obat");
                     tampilkanSuccess("Obat berhasil dihapus.");
                 } else {
                     tampilkanError("Kode obat tidak ditemukan.");
@@ -186,6 +197,18 @@ void menuRiwayat(Riwayat &riwayat) {
                 cout << "  Nama Obat : "; getline(cin, keyword);
                 cout << "\n";
                 riwayat.cari(keyword);
+                pauseScreen();
+                break;
+
+            case 3:
+                tampilkanHeader("TOTAL RIWAYAT TRANSAKSI");
+                cout << "  Total riwayat transaksi: " << riwayat.getTotalTransaksi() << " data\n";
+                pauseScreen();
+                break;
+
+            case 4:
+                tampilkanHeader("HAPUS SEMUA RIWAYAT");
+                riwayat.hapusSemua();
                 pauseScreen();
                 break;
 

@@ -6,6 +6,8 @@ Program berbasis **CLI (Command Line Interface)** menggunakan **C++** dengan ars
 
 > Tugas Akhir — Mata Kuliah Struktur Data  
 > Program Studi Teknik Komputer | Semester 2
+> Kelas Teknik Komputer B 2025
+
 
 ---
 
@@ -13,7 +15,7 @@ Program berbasis **CLI (Command Line Interface)** menggunakan **C++** dengan ars
 
 | Nama | Peran | Modul |
 |------|-------|-------|
-| Attahilla Ahmad Willem | Ketua & BST | `obat.h / obat.cpp` |
+| Attahilla Ahmad Willem (25021) | Ketua & BST | `obat.h / obat.cpp` |
 | Firson Siwan Ta'gan | Integrator & Tampilan | `main.cpp / display.h / display.cpp` |
 | Alya Afrilia Iswanty | Linked List | `riwayat.h / riwayat.cpp` |
 | Muh. Fathir Alma Arijs | Array Queue & Sorting | `antrian.h / antrian.cpp / sortir.h / sortir.cpp` |
