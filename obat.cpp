@@ -4,9 +4,9 @@ BSTObat::BSTObat() {
     root = nullptr;
 }
 
-Obat* BSTObat::insertRekursif(Obat* node, string kode, string nama, int stok, string exp) {
+Obat *BSTObat::insertRekursif(Obat *node, string kode, string nama, int stok, string exp) {
     if (node == nullptr) {
-        Obat* nodeBaru = new Obat();
+        Obat *nodeBaru = new Obat();
         nodeBaru->kode = kode;
         nodeBaru->nama = nama;
         nodeBaru->stok = stok;
@@ -24,7 +24,7 @@ Obat* BSTObat::insertRekursif(Obat* node, string kode, string nama, int stok, st
     return node;
 }
 
-Obat* BSTObat::cariNode(Obat* node, string kode) {
+Obat* BSTObat::cariNode(Obat *node, string kode) {
     if (node == nullptr || node->kode == kode) {
         return node;
     }
@@ -34,15 +34,15 @@ Obat* BSTObat::cariNode(Obat* node, string kode) {
     return cariNode(node->right, kode);
 }
 
-Obat* BSTObat::cariMin(Obat* node) {
-    Obat* current = node;
+Obat* BSTObat::cariMin(Obat *node) {
+    Obat *current = node;
     while (current && current->left != nullptr) {
         current = current->left;
     }
     return current;
 }
 
-Obat* BSTObat::hapusRekursif(Obat* node, string kode, bool& terhapus) {
+Obat* BSTObat::hapusRekursif(Obat *node, string kode, bool &terhapus) {
     if (node == nullptr) return node;
 
     if (kode < node->kode) {
@@ -52,16 +52,16 @@ Obat* BSTObat::hapusRekursif(Obat* node, string kode, bool& terhapus) {
     } else {
         terhapus = true;
         if (node->left == nullptr) {
-            Obat* temp = node->right;
+            Obat *temp = node->right;
             delete node;
             return temp;
         } else if (node->right == nullptr) {
-            Obat* temp = node->left;
+            Obat *temp = node->left;
             delete node;
             return temp;
         }
 
-        Obat* temp = cariMin(node->right);
+        Obat *temp = cariMin(node->right);
         node->kode = temp->kode;
         node->nama = temp->nama;
         node->stok = temp->stok;
@@ -71,7 +71,7 @@ Obat* BSTObat::hapusRekursif(Obat* node, string kode, bool& terhapus) {
     return node;
 }
 
-void BSTObat::inorderTampil(Obat* node) {
+void BSTObat::inorderTampil(Obat *node) {
     if (node != nullptr) {
         inorderTampil(node->left);
         cout << "  " << left << setw(10) << node->kode 
@@ -82,7 +82,7 @@ void BSTObat::inorderTampil(Obat* node) {
     }
 }
 
-void BSTObat::inorderToArray(Obat* node, vector<Obat>& arr) {
+void BSTObat::inorderToArray(Obat *node, vector<Obat> &arr) {
     if (node != nullptr) {
         inorderToArray(node->left, arr);
         arr.push_back(*node);
@@ -95,7 +95,7 @@ void BSTObat::insert(string kode, string nama, int stok, string exp) {
 }
 
 bool BSTObat::tambahStok(string kode, int jumlah) {
-    Obat* target = cariNode(root, kode);
+    Obat *target = cariNode(root, kode);
     if (target != nullptr) {
         target->stok += jumlah;
         return true;
@@ -104,7 +104,7 @@ bool BSTObat::tambahStok(string kode, int jumlah) {
 }
 
 bool BSTObat::kurangiStok(string kode, int jumlah) {
-    Obat* target = cariNode(root, kode);
+    Obat *target = cariNode(root, kode);
     if (target != nullptr && target->stok >= jumlah) {
         target->stok -= jumlah;
         return true;
@@ -118,8 +118,8 @@ bool BSTObat::hapus(string kode) {
     return terhapus;
 }
 
-string BSTObat::getName(string kode) {
-    Obat* target = cariNode(root, kode);
+string BSTObat::getNama(string kode) {
+    Obat *target = cariNode(root, kode);
     if (target != nullptr) {
         return target->nama;
     }
