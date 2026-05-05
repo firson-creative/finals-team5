@@ -6,10 +6,10 @@ using namespace std;
 struct Node {
     string namaObat;    
     string jenis;       
-    int    jumlah;      
+    int jumlah;      
     string tanggal;     
     string keterangan;  
-    Node*  next;        
+    Node *next;        
 
     Node(string namaObat, string jenis, int jumlah,
          string tanggal, string keterangan = "")
@@ -19,17 +19,17 @@ struct Node {
 
 class Riwayat {
 private:
-    Node* head;     
-    int   total;   
+    Node *head;     
+    int total;   
 
 public:
     Riwayat();
     ~Riwayat();
-    void tambah(string namaObat, string jenis, int jumlah,
-                string tanggal, string keterangan = "");
+    void tambah(string namaObat, string jenis, int jumlah, string tanggal, string keterangan = "");
     void tampilkan() const;
-    bool cari(const string& namaObat) const;
+    bool cari(const string &namaObat) const;
     void hapusSemua();
     int getTotalTransaksi() const;
 };
+
 #endif 
