@@ -4,12 +4,12 @@
 using namespace std;
 
 struct Node {
-    string namaObat;    
-    string jenis;       
-    int jumlah;      
-    string tanggal;     
-    string keterangan;  
-    Node *next;        
+    string namaObat;
+    string jenis;
+    int jumlah;
+    string tanggal;
+    string keterangan;
+    Node *next;
 
     Node(string namaObat, string jenis, int jumlah,
          string tanggal, string keterangan = "")
@@ -19,8 +19,8 @@ struct Node {
 
 class Riwayat {
 private:
-    Node *head;     
-    int total;   
+    Node *head;
+    int total;
 
 public:
     Riwayat();

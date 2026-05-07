@@ -48,11 +48,11 @@ void tampilkanInfo(const string &pesan) {
 
 void tampilkanMenuUtama() {
     tampilkanHeader("SISTEM MANAJEMEN INVENTARIS RUMAH SAKIT -- SIMI-RS");
-    cout << "  1.  Kelola Stok Obat\n"; //(BST + Binary Search)
-    cout << "  2.  Antrian Pasien\n"; // (Array Queue)
-    cout << "  3.  Riwayat Transaksi\n"; //(Linked List + Linear Search)
-    cout << "  4.  Urutkan Obat\n"; //(Insertion Sort & Merge Sort)
-    cout << "  5.  Navigasi Ruangan\n"; //(Graph BFS)
+    cout << "  1.  Kelola Stok Obat\n";
+    cout << "  2.  Antrian Pasien\n";
+    cout << "  3.  Riwayat Transaksi\n";
+    cout << "  4.  Urutkan Obat\n";
+    cout << "  5.  Navigasi Ruangan\n";
     cout << "  0.  Keluar\n";
     cout << "\n";
     tampilkanSeparator();
@@ -88,7 +88,7 @@ void tampilkanMenuAntrian() {
 void tampilkanMenuRiwayat() {
     tampilkanHeader("RIWAYAT TRANSAKSI");
     cout << "  1.  Tampilkan Seluruh Riwayat\n";
-    cout << "  2.  Cari Transaksi by Nama Obat\n"; //(Linear Search)
+    cout << "  2.  Cari Transaksi by Nama Obat\n";
     cout << "  3.  Lihat Total Transaksi\n";
     cout << "  4.  Hapus Semua Riwayat\n";
     cout << "  0.  Kembali\n";
@@ -111,7 +111,7 @@ void tampilkanMenuSortir() {
 void tampilkanMenuGraph() {
     tampilkanHeader("NAVIGASI RUANGAN RUMAH SAKIT");
     cout << "  1.  Tampilkan Peta Ruangan\n";
-    cout << "  2.  Cari Jalur Antar Ruangan\n"; //(BFS)
+    cout << "  2.  Cari Jalur Antar Ruangan\n";
     cout << "  0.  Kembali\n";
     cout << "\n";
     tampilkanSeparator();
