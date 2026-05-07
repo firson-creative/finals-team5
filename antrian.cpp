@@ -73,25 +73,25 @@ int jumlahAntrian(const AntrianPasien &antrian) {
 }
 
 void tampilkanAntrian(const AntrianPasien &antrian) {
-    cout << "\n╔══════════════════════════════════════════════════════╗\n";
-    cout <<   "║            DAFTAR ANTRIAN PASIEN APOTEK             ║\n";
-    cout <<   "╠══════╦═══════════════════════╦══════════════════════╣\n";
-    cout <<   "║  No  ║  Nama Pasien          ║  Keperluan Obat      ║\n";
-    cout <<   "╠══════╬═══════════════════════╬══════════════════════╣\n";
+    cout << "\n+======================================================+\n";
+    cout <<   "|            DAFTAR ANTRIAN PASIEN APOTEK             |\n";
+    cout <<   "+======+=====================+======================+\n";
+    cout <<   "|  No  |  Nama Pasien          |  Keperluan Obat      |\n";
+    cout <<   "+======+=====================+======================+\n";
 
     if (isAntrianKosong(antrian)) {
-        cout << "║              Antrian kosong saat ini.               ║\n";
+        cout << "|              Antrian kosong saat ini.               |\n";
     } else {
         for (int i = 0; i < antrian.size; i++) {
             int idx = (antrian.front + i) % MAX_ANTRIAN;
             const Pasien &p = antrian.data[idx];
 
-            cout << "║ " << setw(4) << left << p.nomorAntrian << " ║ "
-                 << setw(21) << left << p.nama << " ║ "
-                 << setw(20) << left << p.keperluanObat << " ║\n";
+            cout << "| " << setw(4) << left << p.nomorAntrian << " | "
+                 << setw(21) << left << p.nama << " | "
+                 << setw(20) << left << p.keperluanObat << " |\n";
         }
     }
 
-    cout << "╚══════╩═══════════════════════╩══════════════════════╝\n";
+    cout << "+======+=====================+======================+\n";
     cout << "  Total antrian: " << antrian.size << " / " << MAX_ANTRIAN << " pasien\n\n";
 }
