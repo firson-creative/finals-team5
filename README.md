@@ -149,23 +149,6 @@ Program memuat data awal saat dijalankan:
 
 ---
 
-## 🔧 Perbaikan yang Dilakukan
-- README disesuaikan dengan modul yang ada dan klaim yang tidak lagi valid dihapus.
-- `simirus.exe` dihapus dari repo agar hanya kode sumber yang tersisa.
-- `BSTObat` sekarang membersihkan memori dengan destructor.
-- `BSTObat::insert()` memperbarui data obat jika kode duplikat.
-- Validasi input ditambahkan untuk jumlah dan tanggal (YYYY-MM-DD).
-- Logging ganda `AntrianPasien` dihilangkan agar pesan hanya muncul dari menu.
-- Fungsi `menuNavigasi()` yang tidak digunakan dihapus dari `graph.cpp`.
-- Pencarian riwayat sekarang mendukung pencarian partial dan case-insensitive.
-
----
-
-## 📌 Catatan Pengembangan
-Fitur persistensi file untuk menyimpan dan memuat data obat, riwayat, antrian, dan ruangan merupakan peningkatan yang disarankan untuk rilis berikutnya.
-
----
-
 ## 📚 Referensi
 - Cormen, T. H., et al. *Introduction to Algorithms*. MIT Press.
 - Stroustrup, B. *The C++ Programming Language*. Addison-Wesley.
