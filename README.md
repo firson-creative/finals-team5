@@ -1,13 +1,6 @@
-# 🏥 Sistem Manajemen Inventaris Rumah Sakit
+# 🏥 Sistem Manajemen Inventaris Rumah Sakit - SIMIRUS
 
-DRAF - MASIH PERLU PENGUBAHAN DAN PENYESUAIAN
-
-Program berbasis **CLI (Command Line Interface)** menggunakan **C++** dengan arsitektur **multi-file** untuk mengelola inventaris obat, antrian pasien, riwayat transaksi, dan navigasi antar ruangan rumah sakit.
-
-> Tugas Akhir — Mata Kuliah Struktur Data  
-> Program Studi Teknik Komputer | Semester 2
-> Kelas Teknik Komputer B 2025
-
+Program berbasis **CLI (Command Line Interface)** menggunakan **C++** dengan arsitektur **multi-file** untuk mengelola inventaris obat, riwayat transaksi, antrian pasien, sortir, dan navigasi ruangan rumah sakit.
 
 ---
 
@@ -15,31 +8,31 @@ Program berbasis **CLI (Command Line Interface)** menggunakan **C++** dengan ars
 
 | Nama | Peran | Modul |
 |------|-------|-------|
-| Attahilla Ahmad Willem (25021) | Ketua & BST | `obat.h / obat.cpp` |
-| Firson Siwan Ta'gan | Integrator & Tampilan | `main.cpp / display.h / display.cpp` |
-| Alya Afrilia Iswanty | Linked List | `riwayat.h / riwayat.cpp` |
-| Muh. Fathir Alma Arijs | Array Queue & Sorting | `antrian.h / antrian.cpp / sortir.h / sortir.cpp` |
-| Devina Nur Putri Pertiwi | Graph | `graph.h / graph.cpp` |
+| Attahilla Ahmad Willem (250210501044) | Ketua & BST | `obat.h / obat.cpp` |
+| Firson Siwan Ta'gan (250210501038) | Integrator & Tampilan | `main.cpp / display.h / display.cpp` |
+| Alya Afrilia Iswanty (250210500018) | Linked List | `riwayat.h / riwayat.cpp` |
+| Devina Nur Putri Pertiwi (250210500026) | Graph | `graph.h / graph.cpp` |
+| Muh. Fathir Alma Arijs (250210501052) | Antrian & Sorting | `antrian.h / antrian.cpp / sortir.h /sortir/cpp`  | 
 
 ---
 
 ## 📁 Struktur File
 
 ```
-hospital_inventory/
+finals-team5/
 ├── main.cpp            ← Entry point, menu utama, integrasi semua modul
 ├── display.h           ← Deklarasi fungsi tampilan CLI
 ├── display.cpp         ← Implementasi tampilan (header, menu, notifikasi)
 ├── obat.h              ← Deklarasi struct Obat dan class BSTObat
-├── obat.cpp            ← Implementasi BST + Binary Search
-├── antrian.h           ← Deklarasi class AntrianPasien
-├── antrian.cpp         ← Implementasi Array Queue (FIFO)
+├── obat.cpp            ← Implementasi BST + binary search + cleanup
 ├── riwayat.h           ← Deklarasi struct Node dan class Riwayat
-├── riwayat.cpp         ← Implementasi Linked List + Linear Search
-├── sortir.h            ← Deklarasi fungsi sorting
-├── sortir.cpp          ← Implementasi Insertion Sort & Merge Sort
+├── riwayat.cpp         ← Implementasi linked list + pencarian linear
 ├── graph.h             ← Deklarasi class Graph
-├── graph.cpp           ← Implementasi Adjacency List + BFS
+├── graph.cpp           ← Implementasi adjacency list + BFS
+├── antrian.h           ← Deklarasi queue pasien
+├── antrian.cpp         ← Implementasi queue pasien
+├── sortir.h            ← Deklarasi class SortirObat
+├── sortir.cpp          ← Implementasi sorting untuk obat
 └── README.md
 ```
 
@@ -47,62 +40,51 @@ hospital_inventory/
 
 ## 🧠 Implementasi Konsep Struktur Data
 
-### 1. Array → Antrian Pasien
-Antrian pasien diimplementasikan menggunakan **array statis** dengan kapasitas tetap. Menggunakan mekanisme **FIFO (First In First Out)** — pasien yang pertama datang, pertama dilayani.
-
-```
-Operasi  : enqueue() | dequeue() | peek() | isKosong() | isPenuh()
-File     : antrian.h / antrian.cpp
-```
-
-### 2. Linked List → Riwayat Transaksi
-Setiap transaksi obat (masuk/keluar) dicatat sebagai **node baru** yang ditambahkan di bagian depan linked list (prepend). Linked list dipilih karena jumlah transaksi tidak terbatas dan tidak memerlukan akses acak.
-
-```
-Operasi  : tambah() | tampilkan() | cari() | hapusSemua()
-File     : riwayat.h / riwayat.cpp
-```
-
-### 3. Binary Search Tree (BST) → Stok Obat
-Seluruh data obat diorganisir dalam **BST** dengan kode obat sebagai key. Traversal **inorder** otomatis menghasilkan daftar obat yang terurut berdasarkan kode.
+### 1. Binary Search Tree (BST) → Stok Obat
+Data obat diorganisir dalam **BST** dengan kode obat sebagai key. Traversal **inorder** menghasilkan daftar obat terurut berdasarkan kode.
 
 ```
 Operasi  : insert() | hapus() | inorder() | tambahStok() | kurangiStok()
 File     : obat.h / obat.cpp
 ```
 
-### 4. Linear Search → Cari Riwayat
-Pencarian transaksi berdasarkan nama obat dilakukan secara **linear** dari node pertama hingga ditemukan. Digunakan pada Linked List yang tidak terurut.
+### 2. Linked List → Riwayat Transaksi
+Riwayat transaksi obat dicatat sebagai node dalam **linked list**. Data dapat ditampilkan, dicari, dan dihapus semua.
 
 ```
-Kompleksitas : O(n)
-File         : riwayat.h / riwayat.cpp
+Operasi  : tambah() | tampilkan() | cari() | hapusSemua()
+File     : riwayat.h / riwayat.cpp
 ```
 
-### 5. Binary Search → Cari Kode Obat
-BST di-traverse **inorder** terlebih dahulu menghasilkan array terurut, kemudian **binary search** dijalankan untuk mencari kode obat. Demonstrasi nyata mengapa data harus terurut sebelum binary search dapat digunakan.
+### 3. Queue → Antrian Pasien
+Antrian pasien direpresentasikan menggunakan array sirkular. Pasien dapat ditambahkan, dilayani, dan daftar antrian dapat ditampilkan.
 
 ```
-Kompleksitas : O(log n)
-File         : obat.h / obat.cpp
+Operasi  : enqueue() | dequeue() | peek() | tampilkan()
+File     : antrian.h / antrian.cpp
 ```
 
-### 6. Insertion Sort & Merge Sort → Urutkan Kadaluarsa
-Array obat hasil inorder BST diurutkan berdasarkan **tanggal kadaluarsa terdekat**. Kedua algoritma diimplementasikan dan dapat dibandingkan hasilnya secara langsung.
+### 4. Sorting → Urutkan Obat
+Obat dapat diurutkan berdasarkan tanggal kadaluarsa menggunakan Insertion Sort dan Merge Sort.
 
 ```
-Insertion Sort  : O(n²)    — cocok untuk data kecil
-Merge Sort      : O(n log n) — efisien untuk data besar
-File            : sortir.h / sortir.cpp
+Operasi  : insertionSortByKadaluarsa() | mergeSortByKadaluarsa() | tampilkanHasilSort()
+File     : sortir.h / sortir.cpp
 ```
 
-### 7. Graph (Adjacency List) → Navigasi Ruangan
-Ruangan-ruangan rumah sakit direpresentasikan sebagai **node** dalam graph. Koneksi antar ruangan yang bertetangga disimpan sebagai **adjacency list**. Pencarian jalur menggunakan **BFS (Breadth-First Search)**.
+### 5. Graph (Adjacency List) → Navigasi Ruangan
+Ruangan rumah sakit direpresentasikan sebagai node dalam **graph**. Koneksi antar-ruangan disimpan dalam **adjacency list** dan jalur terpendek dicari dengan **BFS**.
 
 ```
-Ruangan  : IGD | Apotek | Gudang | Bangsal A | Bangsal B | Bangsal C
 Operasi  : tambahRuangan() | tambahKoneksi() | cariJalur() | tampilkan()
 File     : graph.h / graph.cpp
+```
+
+### 6. Tampilan CLI
+Fungsi tampilan di `display.cpp` menyediakan antarmuka teks untuk menu, header, dan notifikasi.
+
+```
+File     : display.h / display.cpp
 ```
 
 ---
@@ -116,52 +98,36 @@ File     : graph.h / graph.cpp
 ### Kompilasi Manual
 
 ```bash
-g++ main.cpp display.cpp obat.cpp antrian.cpp riwayat.cpp sortir.cpp graph.cpp -o hospital -std=c++11
+g++ main.cpp display.cpp obat.cpp riwayat.cpp graph.cpp antrian.cpp sortir.cpp -o simirus -std=c++11
 ```
 
 ### Jalankan Program
 
 ```bash
 # Linux / macOS
-./hospital
+./simirus
 
 # Windows
-hospital.exe
-```
-
-### Menggunakan Makefile *(opsional)*
-
-```bash
-make        # kompilasi
-make run    # kompilasi + jalankan
-make clean  # hapus file hasil kompilasi
+simirus.exe
 ```
 
 ---
 
-## 🖥️ Tampilan Program
+## 🖥️ Fitur Utama Saat Ini
 
-```
-  =====================================================
-       SISTEM MANAJEMEN INVENTARIS RUMAH SAKIT        
-  =====================================================
-
-  1.  Kelola Stok Obat       (BST + Binary Search)
-  2.  Antrian Pasien          (Array Queue)
-  3.  Riwayat Transaksi       (Linked List + Linear Search)
-  4.  Urutkan Obat            (Insertion Sort & Merge Sort)
-  5.  Navigasi Ruangan        (Graph BFS)
-  0.  Keluar
-
-  =====================================================
-  Pilihan: _
-```
+- Kelola Stok Obat (BST)
+- Riwayat Transaksi Obat (Linked List)
+- Antrian Pasien (Queue)
+- Navigasi Ruangan Rumah Sakit (Graph + BFS)
+- Urutkan Obat berdasarkan tanggal kadaluarsa
+- Validasi input penting untuk stok dan tanggal
+- Tampilan CLI interaktif
 
 ---
 
 ## 📦 Data Demo
 
-Program sudah dilengkapi data awal yang dimuat otomatis saat program dijalankan:
+Program memuat data awal saat dijalankan:
 
 **Obat:**
 | Kode | Nama | Stok | Kadaluarsa |
@@ -173,32 +139,34 @@ Program sudah dilengkapi data awal yang dimuat otomatis saat program dijalankan:
 | OBT005 | Vitamin C 1000mg | 300 | 2027-01-05 |
 | OBT006 | Metformin 500mg | 45 | 2025-06-30 |
 
-**Antrian Pasien:** Budi Santoso → Siti Rahayu → Ahmad Fauzi
-
 **Peta Ruangan:**
-```
-IGD ──── Apotek ──── Gudang
- │          │           │
-Bangsal A  Bangsal B  Bangsal C
- └──────────┘    └────────┘
-```
+- IGD
+- Apotek
+- Gudang
+- Bangsal A
+- Bangsal B
+- Bangsal C
 
 ---
 
-## 📋 Pembagian Kontribusi
+## 🔧 Perbaikan yang Dilakukan
+- README disesuaikan dengan modul yang ada dan klaim yang tidak lagi valid dihapus.
+- `simirus.exe` dihapus dari repo agar hanya kode sumber yang tersisa.
+- `BSTObat` sekarang membersihkan memori dengan destructor.
+- `BSTObat::insert()` memperbarui data obat jika kode duplikat.
+- Validasi input ditambahkan untuk jumlah dan tanggal (YYYY-MM-DD).
+- Logging ganda `AntrianPasien` dihilangkan agar pesan hanya muncul dari menu.
+- Fungsi `menuNavigasi()` yang tidak digunakan dihapus dari `graph.cpp`.
+- Pencarian riwayat sekarang mendukung pencarian partial dan case-insensitive.
 
-| Nama | Kontribusi Utama |
-|------|-----------------|
-| Attahilla Ahmad Willem | Struct Obat, BST (insert/delete/inorder), Binary Search pada array |
-| Firson Siwan Ta'gan | `main.cpp` (menu loop, sub-menu, integrasi), fungsi tampilan CLI, data demo, README |
-| Alya Afrilia Iswanty | Struct Node, Linked List (prepend/traversal), Linear Search, manajemen memori |
-| Muh. Fathir Alma Arijs | Array Queue (enqueue/dequeue/peek), Insertion Sort, Merge Sort, perbandingan sort |
-| Devina Nur Putri Pertiwi | Graph adjacency list, BFS pencarian jalur, tampilan peta ruangan teks |
+---
+
+## 📌 Catatan Pengembangan
+Fitur persistensi file untuk menyimpan dan memuat data obat, riwayat, antrian, dan ruangan merupakan peningkatan yang disarankan untuk rilis berikutnya.
 
 ---
 
 ## 📚 Referensi
-
 - Cormen, T. H., et al. *Introduction to Algorithms*. MIT Press.
 - Stroustrup, B. *The C++ Programming Language*. Addison-Wesley.
 - Materi Kuliah Struktur Data — Semester 2

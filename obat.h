@@ -28,11 +28,13 @@ private:
     Obat *cariNode(Obat *node, string kode);
     void inorderTampil(Obat *node);
     void inorderToArray(Obat *node, vector<Obat> &arr);
+    void clear(Obat *node);
 
 public:
     BSTObat();
+    ~BSTObat();
     
-    void insert(string kode, string nama, int stok, string exp);
+    bool insert(string kode, string nama, int stok, string exp);
     bool tambahStok(string kode, int jumlah);
     bool kurangiStok(string kode, int jumlah);
     bool hapus(string kode);

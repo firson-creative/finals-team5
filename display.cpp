@@ -47,7 +47,7 @@ void tampilkanInfo(const string &pesan) {
 }
 
 void tampilkanMenuUtama() {
-    tampilkanHeader("SISTEM MANAJEMEN INVENTARIS RUMAH SAKIT -- SIMI-RS");
+    tampilkanHeader("SISTEM MANAJEMEN INVENTARIS RUMAH SAKIT -- SIMIRUS");
     cout << "  1.  Kelola Stok Obat\n";
     cout << "  2.  Antrian Pasien\n";
     cout << "  3.  Riwayat Transaksi\n";

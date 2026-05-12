@@ -5,16 +5,17 @@
 #include <vector>
 using namespace std;
 
-void insertionSortByKadaluarsa(vector<Obat> &arr);
+class SortirObat {
+private:
+    bool tanggalLebihAwal(const string &tglA, const string &tglB) const;
+    void merge(vector<Obat> &arr, int kiri, int tengah, int kanan);
+    void mergeSortHelper(vector<Obat> &arr, int kiri, int kanan);
 
-void mergeSortByKadaluarsa(vector<Obat> &arr, int kiri, int kanan);
-
-void merge(vector<Obat> &arr, int kiri, int tengah, int kanan);
-
-void tampilkanPerbandinganSort(vector<Obat> daftarObat);
-
-void tampilkanHasilSort(const vector<Obat> &arr, const string &judulAlgoritma);
-
-bool tanggalLebihAwal(const string &tglA, const string &tglB);
+public:
+    void insertionSortByKadaluarsa(vector<Obat> &arr);
+    void mergeSortByKadaluarsa(vector<Obat> &arr);
+    void tampilkanHasilSort(const vector<Obat> &arr, const string &judulAlgoritma) const;
+    void tampilkanPerbandinganSort(vector<Obat> daftarObat);
+};
 
 #endif // SORTIR_H

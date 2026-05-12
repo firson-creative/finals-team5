@@ -3,17 +3,12 @@
 #include <iomanip>
 using namespace std;
 
-static int nomorUrut = 1;
+int AntrianPasien::nomorUrut = 1;
 
-void initAntrian(AntrianPasien &antrian) {
-    antrian.front = 0;
-    antrian.rear  = 0;
-    antrian.size  = 0;
-}
+AntrianPasien::AntrianPasien() : front(0), rear(0), size(0) {}
 
-bool enqueue(AntrianPasien &antrian, const string &nama, const string &keperluanObat) {
-    if (isAntrianPenuh(antrian)) {
-        cout << "[!] Antrian penuh! Maksimal " << MAX_ANTRIAN << " pasien.\n";
+bool AntrianPasien::enqueue(const string &nama, const string &keperluanObat) {
+    if (isPenuh()) {
         return false;
     }
 
@@ -22,69 +17,57 @@ bool enqueue(AntrianPasien &antrian, const string &nama, const string &keperluan
     p.nama          = nama;
     p.keperluanObat = keperluanObat;
 
-    antrian.data[antrian.rear] = p;
-    antrian.rear = (antrian.rear + 1) % MAX_ANTRIAN;
-    antrian.size++;
-
-    cout << "[+] Pasien \"" << nama << "\" berhasil masuk antrian. "
-         << "Nomor antrian: " << p.nomorAntrian << "\n";
+    data[rear] = p;
+    rear = (rear + 1) % MAX_ANTRIAN;
+    size++;
     return true;
 }
 
-bool dequeue(AntrianPasien &antrian, Pasien &pasienKeluar) {
-    if (isAntrianKosong(antrian)) {
-        cout << "[!] Antrian kosong. Tidak ada pasien yang bisa dilayani.\n";
+bool AntrianPasien::dequeue(Pasien &pasienKeluar) {
+    if (isKosong()) {
         return false;
     }
 
-    pasienKeluar   = antrian.data[antrian.front];
-    antrian.front  = (antrian.front + 1) % MAX_ANTRIAN;
-    antrian.size--;
-
-    cout << "[✓] Melayani pasien: \"" << pasienKeluar.nama
-         << "\" (No. " << pasienKeluar.nomorAntrian << ")"
-         << " — Keperluan: " << pasienKeluar.keperluanObat << "\n";
+    pasienKeluar   = data[front];
+    front  = (front + 1) % MAX_ANTRIAN;
+    size--;
     return true;
 }
 
-bool peek(const AntrianPasien &antrian, Pasien &pasienDepan) {
-    if (isAntrianKosong(antrian)) {
-        cout << "[!] Antrian kosong.\n";
+bool AntrianPasien::peek(Pasien &pasienDepan) const {
+    if (isKosong()) {
         return false;
     }
 
-    pasienDepan = antrian.data[antrian.front];
-    cout << "[i] Pasien terdepan: \"" << pasienDepan.nama
-         << "\" (No. " << pasienDepan.nomorAntrian << ")"
-         << " — Keperluan: " << pasienDepan.keperluanObat << "\n";
+    pasienDepan = data[front];
     return true;
 }
 
-bool isAntrianKosong(const AntrianPasien &antrian) {
-    return antrian.size == 0;
+bool AntrianPasien::isKosong() const {
+    return size == 0;
 }
 
-bool isAntrianPenuh(const AntrianPasien &antrian) {
-    return antrian.size == MAX_ANTRIAN;
+bool AntrianPasien::isPenuh() const {
+    return size == MAX_ANTRIAN;
 }
 
-int jumlahAntrian(const AntrianPasien &antrian) {
-    return antrian.size;
+int AntrianPasien::jumlah() const {
+    return size;
 }
 
-void tampilkanAntrian(const AntrianPasien &antrian) {
+void AntrianPasien::tampilkan() const {
     cout << "\n+======================================================+\n";
     cout <<   "|            DAFTAR ANTRIAN PASIEN APOTEK             |\n";
     cout <<   "+======+=====================+======================+\n";
     cout <<   "|  No  |  Nama Pasien          |  Keperluan Obat      |\n";
     cout <<   "+======+=====================+======================+\n";
 
-    if (isAntrianKosong(antrian)) {
+    if (isKosong()) {
         cout << "|              Antrian kosong saat ini.               |\n";
     } else {
-        for (int i = 0; i < antrian.size; i++) {
-            int idx = (antrian.front + i) % MAX_ANTRIAN;
-            const Pasien &p = antrian.data[idx];
+        for (int i = 0; i < size; i++) {
+            int idx = (front + i) % MAX_ANTRIAN;
+            const Pasien &p = data[idx];
 
             cout << "| " << setw(4) << left << p.nomorAntrian << " | "
                  << setw(21) << left << p.nama << " | "
@@ -93,5 +76,5 @@ void tampilkanAntrian(const AntrianPasien &antrian) {
     }
 
     cout << "+======+=====================+======================+\n";
-    cout << "  Total antrian: " << antrian.size << " / " << MAX_ANTRIAN << " pasien\n\n";
+    cout << "  Total antrian: " << size << " / " << MAX_ANTRIAN << " pasien\n\n";
 }

@@ -1,4 +1,5 @@
 #include "riwayat.h"
+#include <algorithm>
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -69,6 +70,12 @@ void Riwayat::tampilkan() const {
     cout << "  Total Transaksi : " << total << " data\n\n";
 }
 
+static string toLowerString(const string &text) {
+    string lower = text;
+    transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
+    return lower;
+}
+
 bool Riwayat::cari(const string &namaObat) const {
     if (head == nullptr) {
         cout << "\n  [!] Riwayat kosong. [!]\n";
@@ -76,13 +83,15 @@ bool Riwayat::cari(const string &namaObat) const {
     }
 
     cout << "\n  [CARI] Nama Obat : \"" << namaObat << "\"\n";
+    string needle = toLowerString(namaObat);
 
     Node* current   = head;
     int   ditemukan = 0;
     int   nomor     = 1;
 
     while (current != nullptr) {
-        if (current->namaObat == namaObat) {
+        string namaObatLower = toLowerString(current->namaObat);
+        if (namaObatLower.find(needle) != string::npos) {
             if (ditemukan == 0) {
                 cout << "  +-----+---------+---------+--------------+-----------------+\n";
                 cout << "  | No  | Jenis   | Jumlah  | Tanggal      | Keterangan      |\n";

@@ -1,71 +1,81 @@
 #include "graph.h"
 #include <iostream>
-#include <string>
-#include <queue>   
+#include <queue>
+
 using namespace std;
 
-
-void initGraph(Graph& g) {
-    g.jumlahRuangan = 0;
+Graph::Graph() : jumlahRuangan(0) {
     for (int i = 0; i < MAX_RUANGAN; i++) {
-        g.adj[i] = nullptr;
+        adj[i] = nullptr;
     }
 }
 
+Graph::~Graph() {
+    hapusGraph();
+}
 
-int tambahRuangan(Graph& g, const string& nama, const string& deskripsi) {
-    if (g.jumlahRuangan >= MAX_RUANGAN) {
+int Graph::getIndexRuangan(const std::string& nama) const {
+    for (int i = 0; i < jumlahRuangan; i++) {
+        if (ruangan[i].nama == nama) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void Graph::tambahSisiSatuArah(int dari, int ke) {
+    NodeTetangga* node = new NodeTetangga;
+    node->idRuangan = ke;
+    node->next = adj[dari];
+    adj[dari] = node;
+}
+
+int Graph::tambahRuangan(const std::string& nama) {
+    if (jumlahRuangan >= MAX_RUANGAN) {
         cout << "[ERROR] Kapasitas ruangan penuh.\n";
         return -1;
     }
-    int id = g.jumlahRuangan;
-    g.ruangan[id].id          = id;
-    g.ruangan[id].nama        = nama;
-    g.ruangan[id].deskripsi   = deskripsi;
-    g.adj[id]                 = nullptr;
-    g.jumlahRuangan++;
+    int id = jumlahRuangan;
+    ruangan[id].id = id;
+    ruangan[id].nama = nama;
+    ruangan[id].deskripsi = "";
+    adj[id] = nullptr;
+    jumlahRuangan++;
     return id;
 }
 
-
-static void tambahSisiSatuArah(Graph& g, int dari, int ke) {
-    NodeTetangga* node = new NodeTetangga;
-    node->idRuangan    = ke;
-    node->next         = g.adj[dari];   
-    g.adj[dari]        = node;
-}
-
-
-void tambahKoneksi(Graph& g, int idA, int idB) {
-    if (idA < 0 || idA >= g.jumlahRuangan ||
-        idB < 0 || idB >= g.jumlahRuangan) {
-        cout << "[ERROR] ID ruangan tidak valid.\n";
+void Graph::tambahKoneksi(const std::string& namaA, const std::string& namaB) {
+    int idA = getIndexRuangan(namaA);
+    int idB = getIndexRuangan(namaB);
+    if (idA < 0 || idB < 0) {
+        cout << "[ERROR] Nama ruangan tidak valid.\n";
         return;
     }
-    tambahSisiSatuArah(g, idA, idB);
-    tambahSisiSatuArah(g, idB, idA);
+    tambahSisiSatuArah(idA, idB);
+    tambahSisiSatuArah(idB, idA);
 }
 
-
-void tampilkanGraph(const Graph& g) {
+void Graph::tampilkan() const {
     cout << "\n";
-    cout << "  ╔══════════════════════════════════════════════════╗\n";
-    cout << "  ║          PETA KONEKSI RUANGAN RUMAH SAKIT        ║\n";
-    cout << "  ╚══════════════════════════════════════════════════╝\n\n";
+    cout << "  +==============================================+\n";
+    cout << "  |          PETA KONEKSI RUANGAN RUMAH SAKIT   |\n";
+    cout << "  +==============================================+\n\n";
 
-    for (int i = 0; i < g.jumlahRuangan; i++) {
-        cout << "  [" << i << "] " << g.ruangan[i].nama;
-        cout << "  (" << g.ruangan[i].deskripsi << ")\n";
-        cout << "       └─ Terhubung ke : ";
+    for (int i = 0; i < jumlahRuangan; i++) {
+        cout << "  [" << i << "] " << ruangan[i].nama << "\n";
+        if (!ruangan[i].deskripsi.empty()) {
+            cout << "       (" << ruangan[i].deskripsi << ")\n";
+        }
+        cout << "       --> Terhubung ke : ";
 
-        NodeTetangga* curr = g.adj[i];
+        NodeTetangga* curr = adj[i];
         if (curr == nullptr) {
             cout << "(tidak ada koneksi)";
         } else {
             bool pertama = true;
             while (curr != nullptr) {
                 if (!pertama) cout << ", ";
-                cout << g.ruangan[curr->idRuangan].nama;
+                cout << ruangan[curr->idRuangan].nama;
                 pertama = false;
                 curr = curr->next;
             }
@@ -74,22 +84,41 @@ void tampilkanGraph(const Graph& g) {
     }
 }
 
+void Graph::tampilkanDaftarRuangan() const {
+    cout << "\n  Daftar Ruangan:\n";
+    if (jumlahRuangan == 0) {
+        cout << "    (Belum ada ruangan terdaftar)\n";
+        return;
+    }
+    for (int i = 0; i < jumlahRuangan; i++) {
+        cout << "    [" << i << "] " << ruangan[i].nama << "\n";
+    }
+}
 
-bool cariJalurBFS(const Graph& g, int idAsal, int idTujuan) {
-    if (idAsal < 0 || idAsal >= g.jumlahRuangan ||
-        idTujuan < 0 || idTujuan >= g.jumlahRuangan) {
+bool Graph::cariJalur(const std::string& asal, const std::string& tujuan) const {
+    int idAsal = getIndexRuangan(asal);
+    int idTujuan = getIndexRuangan(tujuan);
+    if (idAsal < 0 || idTujuan < 0) {
+        cout << "[ERROR] Nama ruangan tidak valid.\n";
+        return false;
+    }
+    return cariJalurBFS(idAsal, idTujuan);
+}
+
+bool Graph::cariJalurBFS(int idAsal, int idTujuan) const {
+    if (idAsal < 0 || idAsal >= jumlahRuangan ||
+        idTujuan < 0 || idTujuan >= jumlahRuangan) {
         cout << "[ERROR] ID ruangan tidak valid.\n";
         return false;
     }
 
     if (idAsal == idTujuan) {
-        cout << "  Anda sudah berada di " << g.ruangan[idAsal].nama << ".\n";
+        cout << "  Anda sudah berada di " << ruangan[idAsal].nama << ".\n";
         return true;
     }
 
-  
-    bool  dikunjungi[MAX_RUANGAN] = {false};
-    int   parent[MAX_RUANGAN];
+    bool dikunjungi[MAX_RUANGAN] = {false};
+    int parent[MAX_RUANGAN];
     for (int i = 0; i < MAX_RUANGAN; i++) parent[i] = -1;
 
     queue<int> antrian;
@@ -102,12 +131,12 @@ bool cariJalurBFS(const Graph& g, int idAsal, int idTujuan) {
         int sekarang = antrian.front();
         antrian.pop();
 
-        NodeTetangga* curr = g.adj[sekarang];
+        NodeTetangga* curr = adj[sekarang];
         while (curr != nullptr) {
             int tetangga = curr->idRuangan;
             if (!dikunjungi[tetangga]) {
                 dikunjungi[tetangga] = true;
-                parent[tetangga]     = sekarang;
+                parent[tetangga] = sekarang;
 
                 if (tetangga == idTujuan) {
                     ditemukan = true;
@@ -121,81 +150,42 @@ bool cariJalurBFS(const Graph& g, int idAsal, int idTujuan) {
 
     if (!ditemukan) {
         cout << "\n  [!] Tidak ada jalur dari "
-             << g.ruangan[idAsal].nama << " ke "
-             << g.ruangan[idTujuan].nama << ".\n";
+             << ruangan[idAsal].nama << " ke "
+             << ruangan[idTujuan].nama << ".\n";
         return false;
     }
 
-    
     int jalur[MAX_RUANGAN];
     int panjang = 0;
     for (int v = idTujuan; v != -1; v = parent[v]) {
         jalur[panjang++] = v;
     }
 
-   
     cout << "\n";
-    cout << "  ╔══════════════════════════════════════════════════╗\n";
-    cout << "  ║               JALUR TERCEPAT (BFS)              ║\n";
-    cout << "  ╚══════════════════════════════════════════════════╝\n\n";
-    cout << "  Dari  : " << g.ruangan[idAsal].nama   << "\n";
-    cout << "  Ke    : " << g.ruangan[idTujuan].nama << "\n";
+    cout << "  +==============================================+\n";
+    cout << "  |               JALUR TERCEPAT (BFS)          |\n";
+    cout << "  +==============================================+\n\n";
+    cout << "  Dari  : " << ruangan[idAsal].nama << "\n";
+    cout << "  Ke    : " << ruangan[idTujuan].nama << "\n";
     cout << "  Jarak : " << (panjang - 1) << " langkah\n\n";
     cout << "  Rute  : ";
     for (int i = panjang - 1; i >= 0; i--) {
-        cout << g.ruangan[jalur[i]].nama;
+        cout << ruangan[jalur[i]].nama;
         if (i > 0) cout << "  -->  ";
     }
     cout << "\n\n";
     return true;
 }
 
-
-void menuNavigasi(Graph& g) {
-    int pilihan;
-    do {
-        cout << "\n";
-        cout << "  ╔══════════════════════════════════╗\n";
-        cout << "  ║       MENU NAVIGASI RUANGAN      ║\n";
-        cout << "  ╠══════════════════════════════════╣\n";
-        cout << "  ║  1. Tampilkan Peta Koneksi       ║\n";
-        cout << "  ║  2. Cari Jalur Antar Ruangan     ║\n";
-        cout << "  ║  0. Kembali ke Menu Utama        ║\n";
-        cout << "  ╚══════════════════════════════════╝\n";
-        cout << "  Pilih: ";
-        cin  >> pilihan;
-
-        if (pilihan == 1) {
-            tampilkanGraph(g);
-
-        } else if (pilihan == 2) {
-            tampilkanGraph(g);
-
-            int asal, tujuan;
-            cout << "  Masukkan ID ruangan ASAL    : ";
-            cin  >> asal;
-            cout << "  Masukkan ID ruangan TUJUAN  : ";
-            cin  >> tujuan;
-
-            cariJalurBFS(g, asal, tujuan);
-
-        } else if (pilihan != 0) {
-            cout << "  [!] Pilihan tidak valid.\n";
-        }
-
-    } while (pilihan != 0);
-}
-
-
-void hapusGraph(Graph& g) {
-    for (int i = 0; i < g.jumlahRuangan; i++) {
-        NodeTetangga* curr = g.adj[i];
+void Graph::hapusGraph() {
+    for (int i = 0; i < jumlahRuangan; i++) {
+        NodeTetangga* curr = adj[i];
         while (curr != nullptr) {
             NodeTetangga* temp = curr;
             curr = curr->next;
             delete temp;
         }
-        g.adj[i] = nullptr;
+        adj[i] = nullptr;
     }
-    g.jumlahRuangan = 0;
+    jumlahRuangan = 0;
 }
