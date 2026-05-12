@@ -3,11 +3,11 @@
 #include <iomanip>
 using namespace std;
 
-bool tanggalLebihAwal(const string &tglA, const string &tglB) {
+bool SortirObat::tanggalLebihAwal(const string &tglA, const string &tglB) const {
     return tglA < tglB;
 }
 
-void insertionSortByKadaluarsa(vector<Obat> &arr) {
+void SortirObat::insertionSortByKadaluarsa(vector<Obat> &arr) {
     int n = arr.size();
     for (int i = 1; i < n; i++) {
         Obat kunci = arr[i];
@@ -21,7 +21,7 @@ void insertionSortByKadaluarsa(vector<Obat> &arr) {
     }
 }
 
-void merge(vector<Obat> &arr, int kiri, int tengah, int kanan) {
+void SortirObat::merge(vector<Obat> &arr, int kiri, int tengah, int kanan) {
     int n1 = tengah - kiri + 1;
     int n2 = kanan - tengah;
 
@@ -41,15 +41,19 @@ void merge(vector<Obat> &arr, int kiri, int tengah, int kanan) {
     while (j < n2) arr[k++] = R[j++];
 }
 
-void mergeSortByKadaluarsa(vector<Obat> &arr, int kiri, int kanan) {
+void SortirObat::mergeSortHelper(vector<Obat> &arr, int kiri, int kanan) {
     if (kiri >= kanan) return;
     int tengah = kiri + (kanan - kiri) / 2;
-    mergeSortByKadaluarsa(arr, kiri,      tengah);
-    mergeSortByKadaluarsa(arr, tengah + 1, kanan);
+    mergeSortHelper(arr, kiri,      tengah);
+    mergeSortHelper(arr, tengah + 1, kanan);
     merge(arr, kiri, tengah, kanan);
 }
 
-void tampilkanHasilSort(const vector<Obat> &arr, const string &judulAlgoritma) {
+void SortirObat::mergeSortByKadaluarsa(vector<Obat> &arr) {
+    mergeSortHelper(arr, 0, (int)arr.size() - 1);
+}
+
+void SortirObat::tampilkanHasilSort(const vector<Obat> &arr, const string &judulAlgoritma) const {
     cout << "\n  [ " << judulAlgoritma << " ]\n";
     cout << "  " << left << setw(10) << "KODE"
          << " | " << setw(20) << "NAMA OBAT"
@@ -69,7 +73,7 @@ void tampilkanHasilSort(const vector<Obat> &arr, const string &judulAlgoritma) {
     }
 }
 
-void tampilkanPerbandinganSort(vector<Obat> daftarObat) {
+void SortirObat::tampilkanPerbandinganSort(vector<Obat> daftarObat) {
     if (daftarObat.empty()) {
         cout << "  [!] Tidak ada data obat untuk diurutkan.\n";
         return;
@@ -86,7 +90,7 @@ void tampilkanPerbandinganSort(vector<Obat> daftarObat) {
     insertionSortByKadaluarsa(arrInsertion);
     tampilkanHasilSort(arrInsertion, "INSERTION SORT  [O(n^2)]");
 
-    mergeSortByKadaluarsa(arrMerge, 0, (int)arrMerge.size() - 1);
+    mergeSortByKadaluarsa(arrMerge);
     tampilkanHasilSort(arrMerge, "MERGE SORT      [O(n log n)]");
 
     cout << "\n  Keterangan:\n";

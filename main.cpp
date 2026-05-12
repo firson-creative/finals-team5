@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <ctime>
+#include <cctype>
 #include "display.h"
 #include "obat.h"      
 #include "antrian.h"   
@@ -15,6 +16,27 @@ static string tanggalSaatIni() {
     char buffer[11];
     strftime(buffer, sizeof(buffer), "%Y-%m-%d", sekarang);
     return string(buffer);
+}
+
+static bool isValidTanggal(const string &tanggal) {
+    if (tanggal.size() != 10 || tanggal[4] != '-' || tanggal[7] != '-') {
+        return false;
+    }
+    for (int i = 0; i < 10; i++) {
+        if (i == 4 || i == 7) continue;
+        if (!isdigit(static_cast<unsigned char>(tanggal[i]))) {
+            return false;
+        }
+    }
+    int bulan = stoi(tanggal.substr(5, 2));
+    int hari  = stoi(tanggal.substr(8, 2));
+    if (bulan < 1 || bulan > 12) {
+        return false;
+    }
+    int maxHari = 31;
+    if (bulan == 2) maxHari = 29;
+    else if (bulan == 4 || bulan == 6 || bulan == 9 || bulan == 11) maxHari = 30;
+    return hari >= 1 && hari <= maxHari;
 }
 
 void menuObat(BSTObat &bst, Riwayat &riwayat) {
@@ -37,9 +59,18 @@ void menuObat(BSTObat &bst, Riwayat &riwayat) {
                 cout << "  Jumlah Stok     : "; cin >> jumlah; cin.ignore();
                 cout << "  Tgl. Kadaluarsa : "; getline(cin, exp);
 
-                bst.insert(kode, nama, jumlah, exp);
-                riwayat.tambah(nama, "MASUK", jumlah, tanggalSaatIni(), "Tambah obat baru");
-                tampilkanSuccess("Obat berhasil ditambahkan ke sistem.");
+                if (kode.empty() || nama.empty() || jumlah < 0 || !isValidTanggal(exp)) {
+                    tampilkanError("Input tidak valid. Pastikan kode, nama, stok >= 0, dan tanggal YYYY-MM-DD.");
+                } else {
+                    bool baru = bst.insert(kode, nama, jumlah, exp);
+                    if (baru) {
+                        riwayat.tambah(nama, "MASUK", jumlah, tanggalSaatIni(), "Tambah obat baru");
+                        tampilkanSuccess("Obat berhasil ditambahkan ke sistem.");
+                    } else {
+                        riwayat.tambah(nama, "UPDATE", jumlah, tanggalSaatIni(), "Perbarui data obat");
+                        tampilkanInfo("Kode obat sudah ada. Data obat diperbarui.");
+                    }
+                }
                 pauseScreen();
                 break;
 
@@ -48,11 +79,13 @@ void menuObat(BSTObat &bst, Riwayat &riwayat) {
                 cout << "  Kode Obat   : "; getline(cin, kode);
                 cout << "  Jumlah      : "; cin >> jumlah; cin.ignore();
 
-                if (bst.tambahStok(kode, jumlah)) {
+                if (jumlah <= 0) {
+                    tampilkanError("Jumlah harus lebih besar dari 0.");
+                } else if (bst.tambahStok(kode, jumlah)) {
                     riwayat.tambah(bst.getNama(kode), "MASUK", jumlah, tanggalSaatIni(), "Tambah stok");
                     tampilkanSuccess("Stok berhasil ditambah.");
                 } else {
-                    tampilkanError("Kode obat tidak ditemukan.");
+                    tampilkanError("Kode obat tidak ditemukan atau jumlah tidak valid.");
                 }
                 pauseScreen();
                 break;
@@ -62,11 +95,13 @@ void menuObat(BSTObat &bst, Riwayat &riwayat) {
                 cout << "  Kode Obat   : "; getline(cin, kode);
                 cout << "  Jumlah      : "; cin >> jumlah; cin.ignore();
 
-                if (bst.kurangiStok(kode, jumlah)) {
+                if (jumlah <= 0) {
+                    tampilkanError("Jumlah harus lebih besar dari 0.");
+                } else if (bst.kurangiStok(kode, jumlah)) {
                     riwayat.tambah(bst.getNama(kode), "KELUAR", jumlah, tanggalSaatIni(), "Kurangi stok");
                     tampilkanSuccess("Stok berhasil dikurangi.");
                 } else {
-                    tampilkanError("Kode obat tidak ditemukan / stok tidak cukup.");
+                    tampilkanError("Kode obat tidak ditemukan atau stok tidak cukup.");
                 }
                 pauseScreen();
                 break;
@@ -121,12 +156,14 @@ void menuAntrian(AntrianPasien &antrian) {
         cin.ignore();
         clearScreen();
         string nama;
+        string keperluan;
 
         switch (pilihan) {
             case 1: 
                 tampilkanHeader("TAMBAH PASIEN KE ANTRIAN");
-                cout << "  Nama Pasien : "; getline(cin, nama);
-                if (antrian.enqueue(nama)) {
+                cout << "  Nama Pasien        : "; getline(cin, nama);
+                cout << "  Keperluan Obat     : "; getline(cin, keperluan);
+                if (antrian.enqueue(nama, keperluan)) {
                     tampilkanSuccess("Pasien berhasil masuk antrian.");
                 } else {
                     tampilkanError("Antrian penuh! Maksimal kapasitas tercapai.");
@@ -138,8 +175,10 @@ void menuAntrian(AntrianPasien &antrian) {
                 tampilkanHeader("LAYANI PASIEN");
 
                 if (!antrian.isKosong()) {
-                    string dilayani = antrian.dequeue();
-                    tampilkanSuccess("Pasien dilayani: " + dilayani);
+                    Pasien p;
+                    if (antrian.dequeue(p)) {
+                        tampilkanSuccess("Pasien dilayani: " + p.nama);
+                    }
                 } else {
                     tampilkanError("Antrian kosong. Tidak ada pasien.");
                 }
@@ -150,7 +189,10 @@ void menuAntrian(AntrianPasien &antrian) {
                 tampilkanHeader("PASIEN TERDEPAN");
 
                 if (!antrian.isKosong()) {
-                    tampilkanInfo("Pasien terdepan: " + antrian.peek());
+                    Pasien p;
+                    if (antrian.peek(p)) {
+                        tampilkanInfo("Pasien terdepan: " + p.nama);
+                    }
                 } else {
                     tampilkanError("Antrian kosong.");
                 }
@@ -224,6 +266,7 @@ void menuRiwayat(Riwayat &riwayat) {
 }
 
 void menuSortir(BSTObat &bst) {
+    SortirObat sortir;
     int pilihan;
 
     do {
@@ -234,21 +277,27 @@ void menuSortir(BSTObat &bst) {
         clearScreen();
 
         switch (pilihan) {
-            case 1:
+            case 1: {
                 tampilkanHeader("INSERTION SORT - TANGGAL KADALUARSA");
-                insertionSortObat(bst.toArray());
+                vector<Obat> arr = bst.toArray();
+                sortir.insertionSortByKadaluarsa(arr);
+                sortir.tampilkanHasilSort(arr, "INSERTION SORT  [O(n^2)]");
                 pauseScreen();
                 break;
+            }
 
-            case 2:
+            case 2: {
                 tampilkanHeader("MERGE SORT - TANGGAL KADALUARSA");
-                mergeSortObat(bst.toArray());
+                vector<Obat> arr = bst.toArray();
+                sortir.mergeSortByKadaluarsa(arr);
+                sortir.tampilkanHasilSort(arr, "MERGE SORT      [O(n log n)]");
                 pauseScreen();
                 break;
+            }
 
             case 3:
                 tampilkanHeader("PERBANDINGAN INSERTION SORT vs MERGE SORT");
-                bandingkanSort(bst.toArray());
+                sortir.tampilkanPerbandinganSort(bst.toArray());
                 pauseScreen();
                 break;
 
@@ -304,16 +353,16 @@ void menuGraph(Graph &graph) {
 
 void initDemo(BSTObat &bst, AntrianPasien &antrian, Graph &graph) {
 
-    bst.insert("OBT001", "Paracetamol 500mg",  150, "2026-12-01");
-    bst.insert("OBT002", "Amoxicillin 250mg",   80, "2025-08-15");
-    bst.insert("OBT003", "Ibuprofen 400mg",      60, "2026-03-20");
-    bst.insert("OBT004", "Antasida Tablet",     200, "2025-11-10");
-    bst.insert("OBT005", "Vitamin C 1000mg",    300, "2027-01-05");
-    bst.insert("OBT006", "Metformin 500mg",      45, "2025-06-30");
+    bst.insert("OBT001", "Paracetamol 500mg", 150, "2026-12-01");
+    bst.insert("OBT002", "Amoxicillin 250mg", 80, "2025-08-15");
+    bst.insert("OBT003", "Ibuprofen 400mg", 60, "2026-03-20");
+    bst.insert("OBT004", "Antasida Tablet", 200, "2025-11-10");
+    bst.insert("OBT005", "Vitamin C 1000mg", 300, "2027-01-05");
+    bst.insert("OBT006", "Metformin 500mg", 45, "2025-06-30");
 
-    antrian.enqueue("Budi Santoso");
-    antrian.enqueue("Siti Rahayu");
-    antrian.enqueue("Ahmad Fauzi");
+    antrian.enqueue("Budi Santoso", "Paracetamol");
+    antrian.enqueue("Siti Rahayu", "Amoxicillin");
+    antrian.enqueue("Ahmad Fauzi", "Ibuprofen");
 
     graph.tambahRuangan("IGD");
     graph.tambahRuangan("Apotek");
@@ -321,13 +370,13 @@ void initDemo(BSTObat &bst, AntrianPasien &antrian, Graph &graph) {
     graph.tambahRuangan("Bangsal A");
     graph.tambahRuangan("Bangsal B");
     graph.tambahRuangan("Bangsal C");
-    graph.tambahKoneksi("IGD",       "Apotek");
-    graph.tambahKoneksi("IGD",       "Bangsal A");
-    graph.tambahKoneksi("Apotek",    "Gudang");
-    graph.tambahKoneksi("Apotek",    "Bangsal B");
+    graph.tambahKoneksi("IGD", "Apotek");
+    graph.tambahKoneksi("IGD", "Bangsal A");
+    graph.tambahKoneksi("Apotek", "Gudang");
+    graph.tambahKoneksi("Apotek", "Bangsal B");
     graph.tambahKoneksi("Bangsal A", "Bangsal B");
     graph.tambahKoneksi("Bangsal B", "Bangsal C");
-    graph.tambahKoneksi("Gudang",    "Bangsal C");
+    graph.tambahKoneksi("Gudang", "Bangsal C");
 }
 
 int main() {
