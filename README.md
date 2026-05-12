@@ -8,10 +8,11 @@ Program berbasis **CLI (Command Line Interface)** menggunakan **C++** dengan ars
 
 | Nama | Peran | Modul |
 |------|-------|-------|
-| Attahilla Ahmad Willem (25021050) | Ketua & BST | `obat.h / obat.cpp` |
+| Attahilla Ahmad Willem (250210501044) | Ketua & BST | `obat.h / obat.cpp` |
 | Firson Siwan Ta'gan (250210501038) | Integrator & Tampilan | `main.cpp / display.h / display.cpp` |
-| Alya Afrilia Iswanty (25021050) | Linked List | `riwayat.h / riwayat.cpp` |
-| Devina Nur Putri Pertiwi (25021050) | Graph | `graph.h / graph.cpp` |
+| Alya Afrilia Iswanty (250210500018) | Linked List | `riwayat.h / riwayat.cpp` |
+| Devina Nur Putri Pertiwi (250210500026) | Graph | `graph.h / graph.cpp` |
+| Muh. Fathir Alma Arijs (250210501052) | Antrian & Sorting | `antrian.h / antrian.cpp / sortir.h /sortir/cpp`  | 
 
 ---
 
